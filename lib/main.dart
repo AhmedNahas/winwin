@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
+import 'package:provider/provider.dart';
+import 'package:winwin/provider/main_provider.dart';
 
 import 'helpers/my_button.dart';
 import 'helpers/reusable_component.dart';
@@ -18,23 +19,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'WinWin'),
+      home: ChangeNotifierProvider<MainProvider>(
+          create: (BuildContext context) => MainProvider(),
+          child: MyHomePage(title: 'WinWin')),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var userInput = '';
-  var answer = '';
   final List<String> buttons = [
     'C',
     '+/-',
@@ -58,36 +51,24 @@ class _MyHomePageState extends State<MyHomePage> {
     '+',
   ];
   String gameType = "Domino";
-  bool gameReady = false;
   String players = "2";
   bool _isEditingText = false;
   late TextEditingController _editingController;
   List<TextEditingController> _list = [];
   String initialText = "151";
-
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < 2; i++) {
-      _list.add(TextEditingController(text: userInput));
-    }
-  }
-
-  @override
-  void dispose() {
-    _editingController.dispose();
-    super.dispose();
-  }
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    _editingController = TextEditingController(text: userInput);
+    var provider = Provider.of<MainProvider>(context);
+    provider.init();
+    _editingController = TextEditingController(text: provider.userInput[0]);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ), //AppBar
       backgroundColor: Colors.black,
-      body: gameReady
+      body: provider.isGameReady()
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -98,9 +79,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemCount: 2,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
-                        itemBuilder: (BuildContext context, int index) {
+                        itemBuilder: (BuildContext context, int i) {
+                          _list[provider.currentField].text =
+                              provider.userInput[i];
                           return playersField(
-                              controller: _list[index], label: "Whooo");
+                              controller: _list[provider.currentField],
+                              onTab: () {
+                                print("taaaaaaaaaaaaaaaaaaaaaaaaaaaaaaped $i");
+                                provider.setCurrentField(i);
+                              },
+                              label: "Whooo");
                         }),
                   ),
                 ),
@@ -119,10 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             if (index == 0) {
                               return MyButton(
                                 buttontapped: () {
-                                  setState(() {
-                                    userInput = '';
-                                    answer = '0';
-                                  });
+                                  provider.clear();
                                 },
                                 buttonText: buttons[index],
                                 color: Colors.blue[50],
@@ -142,9 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             else if (index == 2) {
                               return MyButton(
                                 buttontapped: () {
-                                  setState(() {
-                                    userInput += buttons[index];
-                                  });
+                                  provider.setUserInput(
+                                      index,
+                                      provider.userInput[provider
+                                          .currentField] += buttons[index]);
                                 },
                                 buttonText: buttons[index],
                                 color: Colors.blue[50],
@@ -155,10 +141,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             else if (index == 3) {
                               return MyButton(
                                 buttontapped: () {
-                                  setState(() {
-                                    userInput = userInput.substring(
-                                        0, userInput.length - 1);
-                                  });
+                                  provider.setUserInput(
+                                      provider.currentField,
+                                      provider.userInput[provider.currentField]
+                                          .substring(0,
+                                              provider.userInput.length - 1));
                                 },
                                 buttonText: buttons[index],
                                 color: Colors.blue[50],
@@ -169,9 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             else if (index == 18) {
                               return MyButton(
                                 buttontapped: () {
-                                  setState(() {
-                                    equalPressed();
-                                  });
+                                  provider.equalPressed(provider.currentField);
                                 },
                                 buttonText: buttons[index],
                                 color: Colors.orange[700],
@@ -183,9 +168,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             else {
                               return MyButton(
                                 buttontapped: () {
-                                  setState(() {
-                                    userInput += buttons[index];
-                                  });
+                                  provider.setUserInput(
+                                      provider.currentField,
+                                      provider.userInput[provider
+                                          .currentField] += buttons[index]);
                                 },
                                 buttonText: buttons[index],
                                 color: isOperator(buttons[index])
@@ -208,10 +194,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
             ),
-      floatingActionButton: gameReady
+      floatingActionButton: provider.isGameReady()
           ? null
           : FloatingActionButton(
-              onPressed: showPrefDialog,
+              onPressed: () {
+                showPrefDialog(context, provider);
+              },
               tooltip: 'Dialog',
               child: Icon(Icons.add),
             ),
@@ -225,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return false;
   }
 
-  void showPrefDialog() {
+  void showPrefDialog(BuildContext context, MainProvider provider) {
     showDialog(
         context: context,
         builder: (bu) => AlertDialog(
@@ -268,10 +256,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            gameReady = true;
-                            Navigator.pop(context);
-                          });
+                          provider.setIsGameReady(true);
+                          Navigator.pop(context);
+                          for (int i = 0; i < 2; i++) {
+                            _list.add(TextEditingController(
+                                text:
+                                    provider.userInput[provider.currentField]));
+                          }
                         },
                         child: Text("OK"))
                   ],
@@ -285,10 +276,8 @@ class _MyHomePageState extends State<MyHomePage> {
       return Center(
         child: TextField(
           onSubmitted: (newValue) {
-            setState(() {
-              initialText = newValue;
-              _isEditingText = false;
-            });
+            initialText = newValue;
+            _isEditingText = false;
           },
           autofocus: true,
           controller: _editingController,
@@ -297,9 +286,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       return InkWell(
           onTap: () {
-            setState(() {
-              _isEditingText = true;
-            });
+            _isEditingText = true;
           },
           child: Text(
             initialText,
@@ -309,16 +296,5 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ));
     }
-  }
-
-  void equalPressed() {
-    String finalUserInput = userInput;
-    finalUserInput = userInput.replaceAll('x', '*');
-
-    Parser p = Parser();
-    Expression exp = p.parse(finalUserInput);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    userInput = eval.toString();
   }
 }
