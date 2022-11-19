@@ -93,7 +93,16 @@ class HomeScreen extends StatelessWidget {
                                           .getCurrentPlayersFieldList[
                                       context
                                           .read<MainProvider>()
-                                          .getCurrentPlayerField] = "0";
+                                          .getCurrentPlayerField] = "";
+                                  controllersList[int.parse(context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayerField)]
+                                      .text = context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayersFieldList[
+                                      int.parse(context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayerField)];
                                   context.read<MainProvider>().notify();
                                 },
                                 buttonText: buttons[index],
@@ -147,6 +156,15 @@ class HomeScreen extends StatelessWidget {
                                                           .getCurrentPlayerField)]
                                                   .length -
                                               1);
+                                  controllersList[int.parse(context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayerField)]
+                                      .text = context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayersFieldList[
+                                      int.parse(context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayerField)];
                                   context.read<MainProvider>().notify();
                                 },
                                 buttonText: buttons[index],
@@ -165,6 +183,15 @@ class HomeScreen extends StatelessWidget {
                                           int.parse(context
                                               .read<MainProvider>()
                                               .getCurrentPlayerField)]);
+                                  controllersList[int.parse(context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayerField)]
+                                      .text = context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayersFieldList[
+                                      int.parse(context
+                                          .read<MainProvider>()
+                                          .getCurrentPlayerField)];
                                   context.read<MainProvider>().notify();
                                 },
                                 buttonText: buttons[index],
@@ -321,7 +348,7 @@ class HomeScreen extends StatelessWidget {
                               cx
                                   .read<MainProvider>()
                                   .currentPlayerFieldList
-                                  .add("0");
+                                  .add("");
                               controllersList.add(TextEditingController(
                                   text: cx
                                       .read<MainProvider>()

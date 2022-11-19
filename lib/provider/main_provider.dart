@@ -48,7 +48,8 @@ class MainProvider with ChangeNotifier {
     Expression exp = p.parse(finalUserInput);
     ContextModel cm = ContextModel();
     double eval = exp.evaluate(EvaluationType.REAL, cm);
-    currentPlayerFieldList[int.parse(currentPlayerField)] = eval.toString();
+    var intV = eval.toInt();
+    currentPlayerFieldList[int.parse(currentPlayerField)] = intV.toString();
     notifyListeners();
   }
 
