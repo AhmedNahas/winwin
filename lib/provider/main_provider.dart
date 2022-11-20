@@ -8,6 +8,9 @@ class MainProvider with ChangeNotifier {
   late String selectedGame;
   late String playerCount;
   final List<String> gamesList = ['Domino', 'Tawla', 'PS'];
+  late Map<String, List<String>> bbbbb = {
+    "Domino": ['2', '3', '4'],
+  };
   final List<String> playersCountList = ['2', '3', '4'];
   bool gameReady = false;
 
