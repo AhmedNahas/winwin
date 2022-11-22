@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:math_expressions/math_expressions.dart';
 
 class MainProvider with ChangeNotifier {
   List<String> currentPlayerFieldList = [];
@@ -10,13 +9,6 @@ class MainProvider with ChangeNotifier {
   final List<String> gamesList = ['Domino', 'Tawla', 'PS'];
   final List<String> playersCountList = ['2', '3', '4'];
   bool gameReady = false;
-
-  // void init() {
-  //   for (int i = 0; i < 2; i++) {
-  //     //how many players
-  //     userInput.add("0");
-  //   }
-  // }
 
   set setCurrentField(String n) {
     this.currentPlayerField = n;
@@ -36,28 +28,6 @@ class MainProvider with ChangeNotifier {
 
   bool isGameReady() {
     return gameReady;
-  }
-
-  void equalPressed(String i) {
-    String finalUserInput =
-        currentPlayerFieldList[int.parse(currentPlayerField)];
-    finalUserInput = currentPlayerFieldList[int.parse(currentPlayerField)]
-        .replaceAll('x', '*');
-
-    Parser p = Parser();
-    Expression exp = p.parse(finalUserInput);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    var intV = eval.toInt();
-    currentPlayerFieldList[int.parse(currentPlayerField)] = intV.toString();
-    notifyListeners();
-  }
-
-  bool isOperator(String x) {
-    if (x == '/' || x == 'x' || x == '-' || x == '+' || x == '=') {
-      return true;
-    }
-    return false;
   }
 
   set setSelectedGame(String s) {

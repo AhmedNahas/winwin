@@ -8,28 +8,19 @@ import 'package:winwin/provider/main_provider.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.title}) : super(key: key);
   final List<String> buttons = [
-    'C',
-    '+/-',
-    '%',
-    'DEL',
     '7',
     '8',
     '9',
-    '/',
     '4',
     '5',
     '6',
-    'x',
     '1',
     '2',
     '3',
-    '-',
+    '',
     '0',
-    '.',
-    '=',
-    '+',
+    ''
   ];
-  String players = "2";
   late TextEditingController reachedGameEndController;
   List<TextEditingController> controllersList = [];
   final String title;
@@ -37,8 +28,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var provider = Provider.of<MainProvider>(context);
-    // provider.init();
     reachedGameEndController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
@@ -58,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
                         itemBuilder: (BuildContext context, int i) {
-                          return playerScoreTextField(
+                          return playersCard(
                               controller: controllersList[i],
                               onTab: () {
                                 context.read<MainProvider>().setCurrentField =
@@ -69,7 +58,8 @@ class HomeScreen extends StatelessWidget {
                                     .read<MainProvider>()
                                     .getCurrentPlayersFieldList[i];
                               },
-                              label: "Whooo");
+                              label: "Whooo",
+                              context: context);
                         }),
                   ),
                 ),
@@ -82,159 +72,35 @@ class HomeScreen extends StatelessWidget {
                           itemCount: buttons.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4, mainAxisExtent: 50),
+                                  mainAxisSpacing: 5.0,
+                                  crossAxisCount: 3,
+                                  mainAxisExtent: 60),
                           itemBuilder: (BuildContext context, int index) {
-                            // Clear Button
-                            if (index == 0) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
+                            return buttons[index].isEmpty
+                                ? Spacer()
+                                : MyButton(
+                                    buttontapped: () {
                                       context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField] = "";
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-
-                            // +/- button
-                            else if (index == 1) {
-                              return MyButton(
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-                            // % Button
-                            else if (index == 2) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                              .read<MainProvider>()
-                                              .currentPlayerFieldList[
-                                          context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField] +=
-                                      buttons[index];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-                            // Delete Button
-                            else if (index == 3) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                      .read<MainProvider>()
-                                      .currentPlayerFieldList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .substring(
-                                          0,
-                                          context
                                                   .read<MainProvider>()
                                                   .currentPlayerFieldList[
-                                                      int.parse(context
-                                                          .read<MainProvider>()
-                                                          .getCurrentPlayerField)]
-                                                  .length -
-                                              1);
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-                            // Equal_to Button
-                            else if (index == 18) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context.read<MainProvider>().equalPressed(
-                                      context
+                                              int.parse(context
+                                                  .read<MainProvider>()
+                                                  .getCurrentPlayerField)] +=
+                                          buttons[index];
+                                      controllersList[int.parse(context
                                               .read<MainProvider>()
-                                              .currentPlayerFieldList[
+                                              .getCurrentPlayerField)]
+                                          .text = context
+                                              .read<MainProvider>()
+                                              .getCurrentPlayersFieldList[
                                           int.parse(context
                                               .read<MainProvider>()
-                                              .getCurrentPlayerField)]);
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.orange[700],
-                                textColor: Colors.white,
-                              );
-                            }
-
-                            //  other buttons
-                            else {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                              .read<MainProvider>()
-                                              .currentPlayerFieldList[
-                                          int.parse(context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField)] +=
-                                      buttons[index];
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: context
-                                        .watch<MainProvider>()
-                                        .isOperator(buttons[index])
-                                    ? Colors.blueAccent
-                                    : Colors.white,
-                                textColor: context
-                                        .watch<MainProvider>()
-                                        .isOperator(buttons[index])
-                                    ? Colors.white
-                                    : Colors.black,
-                              );
-                            }
+                                              .getCurrentPlayerField)];
+                                      context.read<MainProvider>().notify();
+                                    },
+                                    buttonText: buttons[index],
+                                    textColor: Colors.white,
+                                  );
                           }),
                     ), // GridView.builder
                   ),
