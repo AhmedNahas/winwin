@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:winwin/helpers/common.dart';
 import 'package:winwin/helpers/my_button.dart';
 import 'package:winwin/helpers/reusable_component.dart';
+import 'package:winwin/model/player_info.dart';
 import 'package:winwin/provider/main_provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -28,13 +30,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var providerWatch = context.watch<MainProvider>();
+    var providerRead = context.read<MainProvider>();
     reachedGameEndController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
       ), //AppBar
       backgroundColor: Colors.black,
-      body: context.watch<MainProvider>().isGameReady()
+      body: providerWatch.isGameReady()
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -42,24 +46,30 @@ class HomeScreen extends StatelessWidget {
                   flex: 2,
                   child: Container(
                     child: GridView.builder(
-                        itemCount: int.parse(
-                            context.read<MainProvider>().getPlayersCount),
+                        itemCount: int.parse(providerRead.getPlayersCount),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2),
                         itemBuilder: (BuildContext context, int i) {
                           return playersCard(
                               controller: controllersList[i],
                               onTab: () {
-                                context.read<MainProvider>().setCurrentField =
-                                    i.toString();
-                                print(
-                                    "current Player ${context.read<MainProvider>().getCurrentPlayerField}");
-                                controllersList[i].text = context
-                                    .read<MainProvider>()
-                                    .getCurrentPlayersFieldList[i];
+                                if (providerRead.getCurrentTextField
+                                        .compareTo("") !=
+                                    0) {
+                                  providerRead.getPlayersList[int.parse(
+                                          providerRead.getCurrentTextField)]
+                                      .setColor(Colors.black);
+                                }
+                                providerRead.setCurrentTextField = i.toString();
+                                controllersList[i].text =
+                                    providerRead.getPlayersList[i].currentScore;
+                                providerRead.getPlayersList[i]
+                                    .setColor(Colors.grey);
                               },
-                              label: "Whooo",
-                              context: context);
+                              player: providerRead.getPlayersList[i],
+                              context: context,
+                              cardColor:
+                                  providerRead.getPlayersList[i].getColor());
                         }),
                   ),
                 ),
@@ -76,27 +86,23 @@ class HomeScreen extends StatelessWidget {
                                   crossAxisCount: 3,
                                   mainAxisExtent: 60),
                           itemBuilder: (BuildContext context, int index) {
+                            var prov = providerRead;
                             return buttons[index].isEmpty
                                 ? Spacer()
                                 : MyButton(
                                     buttontapped: () {
-                                      context
-                                                  .read<MainProvider>()
-                                                  .currentPlayerFieldList[
-                                              int.parse(context
-                                                  .read<MainProvider>()
-                                                  .getCurrentPlayerField)] +=
-                                          buttons[index];
-                                      controllersList[int.parse(context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField)]
-                                          .text = context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayersFieldList[
-                                          int.parse(context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField)];
-                                      context.read<MainProvider>().notify();
+                                      prov
+                                          .getPlayersList[int.parse(
+                                              prov.getCurrentTextField)]
+                                          .currentScore += buttons[index];
+                                      controllersList[int.parse(
+                                                  prov.getCurrentTextField)]
+                                              .text =
+                                          prov
+                                              .getPlayersList[int.parse(
+                                                  prov.getCurrentTextField)]
+                                              .currentScore;
+                                      prov.notify();
                                     },
                                     buttonText: buttons[index],
                                     textColor: Colors.white,
@@ -114,10 +120,9 @@ class HomeScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () {
-                  context.read<MainProvider>().setSelectedGame =
-                      context.read<MainProvider>().getGamesList[0];
-                  context.read<MainProvider>().setPlayersCount =
-                      context.read<MainProvider>().getPlayersCountList[0];
+                  providerRead.setSelectedGame = providerRead.getGamesList[0];
+                  providerRead.setPlayersCount =
+                      providerRead.getPlayersCountList[0];
                   showPrefDialog(context);
                 },
               ),
@@ -211,14 +216,16 @@ class HomeScreen extends StatelessWidget {
                                         .read<MainProvider>()
                                         .getPlayersCount);
                                 i++) {
-                              cx
-                                  .read<MainProvider>()
-                                  .currentPlayerFieldList
-                                  .add("");
+                              cx.read<MainProvider>().setPlayersList(
+                                  new PlayerInfo(
+                                      playerName: "Eid",
+                                      currentScore: "",
+                                      playerIcon: randomIcon()));
                               controllersList.add(TextEditingController(
                                   text: cx
                                       .read<MainProvider>()
-                                      .currentPlayerFieldList[i]));
+                                      .getPlayersList[i]
+                                      .currentScore));
                             }
                           }
                         },
