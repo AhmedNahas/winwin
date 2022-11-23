@@ -1,86 +1,81 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:winwin/model/player_info.dart';
 
 Widget playersCard(
-    {required controller, required onTab, required context, required label}) {
-  final List<IconData> iconData = <IconData>[
-    Icons.call,
-    Icons.school,
-    Icons.face,
-    Icons.manage_accounts,
-    Icons.catching_pokemon,
-    Icons.videogame_asset_outlined
-  ];
-  final Random r = Random();
+    {required controller,
+    required onTab,
+    required context,
+    required PlayerInfo player,
+    required cardColor}) {
   return SingleChildScrollView(
     physics: const BouncingScrollPhysics(),
-    child: Column(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Stack(
-            alignment: AlignmentDirectional.topCenter,
-            children: [
-              CircleAvatar(
-                radius: 18.0,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                child: CircleAvatar(
-                  radius: 15.0,
-                  child: Icon(iconData[r.nextInt(iconData.length)]),
-                ),
+    child: Container(
+      margin: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(3.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.0), color: cardColor),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Stack(
+          alignment: AlignmentDirectional.topCenter,
+          children: [
+            CircleAvatar(
+              radius: 18.0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              child: CircleAvatar(
+                radius: 15.0,
+                child: player.playerIcon,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 35.0),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 170.0,
-                      child: TextFormField(
-                        controller: controller,
-                        onTap: onTab,
-                        autofocus: false,
-                        focusNode: FocusNode(canRequestFocus: false),
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          labelText: label,
-                          filled: true,
-                          fillColor: Colors.white,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(width: 3, color: Colors.blue),
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                        ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 35.0),
+              child: Column(
+                children: [
+                  Container(
+                    width: 170.0,
+                    child: TextFormField(
+                      controller: controller,
+                      onTap: onTab,
+                      autofocus: false,
+                      focusNode: FocusNode(canRequestFocus: false),
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: player.playerName,
+                        filled: true,
+                        fillColor: Colors.white,
+                        /*enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(width: 3, color: Colors.blue),
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),*/
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CircleAvatar(
-                          radius: 20.0,
-                          backgroundColor: Colors.green,
-                          child: Text("Win"),
-                        ),
-                        SizedBox(
-                          width: 70.0,
-                        ),
-                        CircleAvatar(
-                          radius: 20.0,
-                          backgroundColor: Colors.red,
-                          child: Text("lose"),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircleAvatar(
+                        radius: 20.0,
+                        backgroundColor: Colors.green,
+                        child: Text("Win"),
+                      ),
+                      SizedBox(
+                        width: 70.0,
+                      ),
+                      CircleAvatar(
+                        radius: 20.0,
+                        backgroundColor: Colors.red,
+                        child: Text("lose"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
-      ],
+      ),
     ),
   );
 }
