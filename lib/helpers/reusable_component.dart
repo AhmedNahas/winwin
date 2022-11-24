@@ -13,7 +13,7 @@ Widget playersCard(
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(3.0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30.0), color: player.getColor),
+          borderRadius: BorderRadius.circular(30.0), color: player.getColor()),
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: Stack(

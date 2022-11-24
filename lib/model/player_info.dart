@@ -14,7 +14,7 @@ class PlayerInfo {
     this.playerIcon = playerIcon;
   }
 
-  set setColor(color) => this.color = color;
+  void setColor(color) => this.color = color;
 
-  get getColor => color;
+  Color getColor() => color;
 }

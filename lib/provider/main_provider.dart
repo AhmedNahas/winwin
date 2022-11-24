@@ -14,7 +14,7 @@ class MainProvider with ChangeNotifier {
 
   set setCurrentTextField(String n) {
     this._currentPlayerField = n;
-    notifyListeners();
+    notify();
   }
 
   get getCurrentTextField => _currentPlayerField;

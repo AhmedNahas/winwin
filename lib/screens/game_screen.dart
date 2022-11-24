@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:winwin/helpers/constants.dart';
 import 'package:winwin/helpers/my_button.dart';
 import 'package:winwin/helpers/reusable_component.dart';
+import 'package:winwin/model/player_info.dart';
 import 'package:winwin/provider/main_provider.dart';
 
 class GameScreen extends StatelessWidget {
@@ -32,14 +33,14 @@ class GameScreen extends StatelessWidget {
                         controller: read.getControllersList[i],
                         onTab: () {
                           if (read.getCurrentTextField.compareTo("") != 0) {
-                            read.getPlayersList[
-                                    int.parse(read.getCurrentTextField)]
-                                .setColor(Colors.black);
+                            PlayerInfo p = read.getPlayersList[
+                                int.parse(read.getCurrentTextField)];
+                            p.setColor(Colors.black);
                           }
+                          PlayerInfo p2 = read.getPlayersList[i];
                           read.setCurrentTextField = i.toString();
-                          read.getControllersList[i].text =
-                              read.getPlayersList[i].currentScore;
-                          read.getPlayersList[i].setColor(Colors.grey);
+                          read.getControllersList[i].text = p2.currentScore;
+                          p2.setColor(Colors.grey);
                         },
                         player: read.getPlayersList[i],
                         context: context,
