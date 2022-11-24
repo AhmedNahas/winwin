@@ -6,15 +6,14 @@ Widget playersCard(
     {required controller,
     required onTab,
     required context,
-    required PlayerInfo player,
-    required cardColor}) {
+    required PlayerInfo player}) {
   return SingleChildScrollView(
     physics: const BouncingScrollPhysics(),
     child: Container(
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(3.0),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30.0), color: cardColor),
+          borderRadius: BorderRadius.circular(30.0), color: player.getColor),
       child: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: Stack(
@@ -44,11 +43,6 @@ Widget playersCard(
                         labelText: player.playerName,
                         filled: true,
                         fillColor: Colors.white,
-                        /*enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(width: 3, color: Colors.blue),
-                          borderRadius: BorderRadius.circular(50.0),
-                        ),*/
                       ),
                     ),
                   ),
@@ -92,12 +86,6 @@ Widget defaultTextFormField(
       controller: controller,
       keyboardType: inputType,
       obscureText: obscure,
-      onFieldSubmitted: (String value) {
-        //log(value);
-      },
-      onChanged: (String value) {
-        //log(value);
-      },
       validator: validate,
       decoration: InputDecoration(
         labelText: label,
@@ -149,6 +137,9 @@ AppBar defaultAppBar(
         title!,
         style: Theme.of(context).textTheme.subtitle1,
       ),
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       actions: actions,
+    );
+
+Widget sizedBoxHeightTen() => SizedBox(
+      height: 10.0,
     );

@@ -10,7 +10,7 @@ class MainProvider with ChangeNotifier {
   late String _playerCount;
   final List<String> _gamesList = ['Domino', 'Tawla', 'PS'];
   final List<String> _playersCountList = ['2', '3', '4'];
-  bool _gameReady = false;
+  List<TextEditingController> _controllersList = [];
 
   set setCurrentTextField(String n) {
     this._currentPlayerField = n;
@@ -23,14 +23,10 @@ class MainProvider with ChangeNotifier {
 
   get getPlayersList => _playersList;
 
-  void setIsGameReady(bool n) {
-    this._gameReady = n;
-    notifyListeners();
-  }
+  void setControllersList(TextEditingController con) =>
+      _controllersList.add(con);
 
-  bool isGameReady() {
-    return _gameReady;
-  }
+  get getControllersList => _controllersList;
 
   set setSelectedGame(String s) {
     this._selectedGame = s;
