@@ -150,7 +150,7 @@ class HomeScreen extends StatelessWidget {
             read.setPlayersList(new PlayerInfo(
                 playerName: "Eid", currentScore: "", playerIcon: randomIcon()));
             read.setControllersList(TextEditingController(
-                text: read.getPlayersList[i].currentScore));
+                text: read.getPlayersList()[i].currentScore));
           }
           Navigator.pop(cx);
           Navigator.push(

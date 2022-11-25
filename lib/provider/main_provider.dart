@@ -21,7 +21,7 @@ class MainProvider with ChangeNotifier {
 
   void setPlayersList(PlayerInfo player) => _playersList.add(player);
 
-  get getPlayersList => _playersList;
+  List<PlayerInfo> getPlayersList() => _playersList;
 
   void setControllersList(TextEditingController con) =>
       _controllersList.add(con);
