@@ -10,6 +10,7 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var read = context.read<MainProvider>();
+    var watch = context.watch<MainProvider>();
     return Scaffold(
         appBar: defaultAppBar(
           title: read.getSelectedGame,
@@ -29,7 +30,7 @@ class GameScreen extends StatelessWidget {
                         crossAxisCount: 2),
                     itemBuilder: (BuildContext context, int i) {
                       return playersCard(
-                        controller: read.getControllersList[i],
+                        controller: watch.getControllersList[i],
                         onTab: () {
                           if (read.getCurrentTextField.compareTo("") != 0) {
                             read
