@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget randomIcon()
-{
+Widget randomIcon() {
   final List<IconData> iconData = <IconData>[
     Icons.call,
     Icons.school,
@@ -15,5 +14,8 @@ Widget randomIcon()
   ];
   final Random r = Random();
 
- return Icon(iconData[r.nextInt(iconData.length)]);
+  return Icon(
+    iconData[r.nextInt(iconData.length)],
+    color: Colors.deepOrange,
+  );
 }

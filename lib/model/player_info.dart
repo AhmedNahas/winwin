@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PlayerInfo {
   late String playerName;
-  late String currentScore;
+  late int currentScore;
   late Icon playerIcon;
   Color color = Colors.black;
 

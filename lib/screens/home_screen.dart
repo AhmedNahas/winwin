@@ -21,6 +21,7 @@ class HomeScreen extends StatelessWidget {
         title: title,
         context: context,
         showLeading: false,
+        onTab: null,
       ), //AppBar
       backgroundColor: Colors.black,
       body: Center(
@@ -37,7 +38,7 @@ class HomeScreen extends StatelessWidget {
               ),
               Text(
                 'Tap to add new game!',
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.orangeAccent, fontSize: 20),
               ),
             ],
           ),
@@ -60,14 +61,19 @@ class HomeScreen extends StatelessWidget {
                 title: Text('Preferences'),
                 content: Container(
                   height: 300.0,
-                  child: Column(
-                    children: [
-                      gameType(cx),
-                      playersNumber(cx),
-                      gameEnd(),
-                      sizedBoxHeightTen(),
-                      okayButton(cx),
-                    ],
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        gameType(cx),
+                        playersNumber(cx),
+                        gameEnd(),
+                        sizedBoxHeightTen(),
+                        playersNames(cx),
+                        sizedBoxHeightTen(),
+                        okayButton(cx),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -131,6 +137,7 @@ class HomeScreen extends StatelessWidget {
         if (value!.isEmpty) {
           return "Please enter when game ends";
         }
+        return null;
       },
       inputType: TextInputType.number,
       label: "Game end",
@@ -147,9 +154,10 @@ class HomeScreen extends StatelessWidget {
         if (formKey.currentState!.validate()) {
           for (int i = 0; i < int.parse(read.getPlayersCount); i++) {
             read.setPlayersList(new PlayerInfo(
-                playerName: "Eid", currentScore: "", playerIcon: randomIcon()));
-            read.setControllersList(TextEditingController(
-                text: read.getPlayersList()[i].currentScore));
+                playerName: read.getNamesControllersList[i].text,
+                currentScore: 0,
+                playerIcon: randomIcon()));
+            read.setScoresControllersList(TextEditingController(text: "0"));
           }
           Navigator.pop(cx);
           Navigator.push(
@@ -158,6 +166,36 @@ class HomeScreen extends StatelessWidget {
       },
       label: 'Ok',
       textColor: Colors.white,
+    );
+  }
+
+  Widget playersNames(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    return Container(
+      height: 100.0,
+      width: 400.0,
+      child: GridView.builder(
+          itemCount: int.parse(read.getPlayersCount),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, mainAxisExtent: 50.0),
+          itemBuilder: (BuildContext context, int i) {
+            read.setNamesControllersList(TextEditingController());
+            return Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: defaultTextFormField(
+                controller: read.getNamesControllersList[i],
+                validate: (String? value) {
+                  if (value!.isEmpty) {
+                    return "Please enter valid name";
+                  }
+                  return null;
+                },
+                inputType: TextInputType.text,
+                label: "Name",
+                icon: const Icon(Icons.face),
+              ),
+            );
+          }),
     );
   }
 }

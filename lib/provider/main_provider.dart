@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:winwin/model/player_info.dart';
 
@@ -8,9 +7,21 @@ class MainProvider with ChangeNotifier {
   String _currentPlayerField = "";
   late String _selectedGame;
   late String _playerCount;
+  String _tappedNum = "Score";
   final List<String> _gamesList = ['Domino', 'Tawla', 'PS'];
   final List<String> _playersCountList = ['2', '3', '4'];
-  List<TextEditingController> _controllersList = [];
+  List<TextEditingController> _scoresControllersList = [];
+  List<TextEditingController> _namesControllersList = [];
+
+  void clearAll() {
+    _playersList = [];
+    _currentPlayerField = "";
+    _selectedGame = "";
+    _playerCount = "";
+    _tappedNum = "Score";
+    _scoresControllersList = [];
+    _namesControllersList = [];
+  }
 
   set setCurrentTextField(String n) {
     this._currentPlayerField = n;
@@ -23,10 +34,15 @@ class MainProvider with ChangeNotifier {
 
   List<PlayerInfo> getPlayersList() => _playersList;
 
-  void setControllersList(TextEditingController con) =>
-      _controllersList.add(con);
+  void setScoresControllersList(TextEditingController con) =>
+      _scoresControllersList.add(con);
 
-  get getControllersList => _controllersList;
+  get getScoresControllersList => _scoresControllersList;
+
+  void setNamesControllersList(TextEditingController con) =>
+      _namesControllersList.add(con);
+
+  get getNamesControllersList => _namesControllersList;
 
   set setSelectedGame(String s) {
     this._selectedGame = s;
@@ -46,5 +62,18 @@ class MainProvider with ChangeNotifier {
 
   List<String> get getPlayersCountList => _playersCountList;
 
+  void setTappedNumber(String v) {
+    this._tappedNum = v;
+    notify();
+  }
+
+  get getTappedNum => _tappedNum;
+
   void notify() => notifyListeners();
+
+  @override
+  void dispose() {
+    clearAll();
+    super.dispose();
+  }
 }

@@ -18,6 +18,7 @@ class MyButton extends StatelessWidget {
         child: Container(
           child: CircleAvatar(
             radius: 40.0,
+            backgroundColor: Colors.deepOrangeAccent,
             child: Center(
               child: Text(
                 buttonText,
