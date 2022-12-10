@@ -12,3 +12,5 @@ final List<String> buttons = [
   '0',
   ''
 ];
+
+enum Status { WINNER, LOSER, ONGOING, OVER }

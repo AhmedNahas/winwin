@@ -6,7 +6,7 @@ Widget playersCard(
     {required controller,
     required onTab,
     required context,
-    required PlayerInfo player}) {
+    required Player player}) {
   return SingleChildScrollView(
     physics: const BouncingScrollPhysics(),
     child: Container(
@@ -76,62 +76,51 @@ Widget playersCard(
 
 Widget playersCardDomino(
     {required controller,
-    required onTab,
+    required onTextTab,
     required context,
-    required PlayerInfo player,
-    required addBtn}) {
+    required Player player}) {
   return SingleChildScrollView(
     physics: const BouncingScrollPhysics(),
     child: Container(
       margin: const EdgeInsets.all(10.0),
-      padding: const EdgeInsets.all(3.0),
+      padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30.0), color: player.getColor()),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: Stack(
-          alignment: AlignmentDirectional.topCenter,
-          children: [
-            CircleAvatar(
-              radius: 18.0,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              child: CircleAvatar(
-                radius: 15.0,
-                child: player.playerIcon,
-              ),
+      child: Stack(
+        alignment: AlignmentDirectional.topCenter,
+        children: [
+          CircleAvatar(
+            radius: 18.0,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            child: CircleAvatar(
+              radius: 15.0,
+              child: player.playerIcon,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 35.0),
-              child: Column(
-                children: [
-                  Container(
-                    width: 170.0,
-                    child: TextFormField(
-                      controller: controller,
-                      onTap: onTab,
-                      autofocus: false,
-                      focusNode: FocusNode(canRequestFocus: false),
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        labelText: player.playerName,
-                        filled: true,
-                        fillColor: Colors.white,
-                      ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 35.0),
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(5.0),
+                  width: 170.0,
+                  child: TextFormField(
+                    controller: controller,
+                    onTap: onTextTab,
+                    autofocus: false,
+                    focusNode: FocusNode(canRequestFocus: false),
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: player.playerName,
+                      filled: true,
+                      fillColor: Colors.white,
                     ),
                   ),
-                  GestureDetector(
-                    child: CircleAvatar(
-                      radius: 15.0,
-                      backgroundColor: Colors.green,
-                      child: Text("+", style: TextStyle(color: Colors.white)),
-                    ),
-                    onTap: addBtn,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     ),
   );

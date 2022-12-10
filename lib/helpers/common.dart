@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget randomIcon() {
+Icon randomIcon() {
   final List<IconData> iconData = <IconData>[
     Icons.call,
     Icons.school,

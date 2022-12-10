@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winwin/helpers/common.dart';
 import 'package:winwin/helpers/reusable_component.dart';
+import 'package:winwin/model/game_model.dart';
 import 'package:winwin/model/player_info.dart';
 import 'package:winwin/provider/main_provider.dart';
 import 'package:winwin/screens/game_screen.dart';
 
+import '../helpers/constants.dart';
+
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.title}) : super(key: key);
-  late TextEditingController reachedGameEndController;
   String title;
   var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     var read = context.read<MainProvider>();
-    reachedGameEndController = TextEditingController();
     return Scaffold(
       appBar: defaultAppBar(
         title: title,
@@ -43,8 +45,13 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           onTap: () {
-            read.setSelectedGame = read.getGamesList[0];
-            read.setPlayersCount = read.getPlayersCountList[0];
+            Game game = Game(
+                gameType: read.getGamesList[0],
+                playersCount: read.getPlayersCountList[0],
+                gameIcon: randomIcon(),
+                winnersCount: 0,
+                gameStatus: Status.ONGOING);
+            read.game = game;
             showPrefDialog(context);
           },
         ),
@@ -60,14 +67,15 @@ class HomeScreen extends StatelessWidget {
               child: AlertDialog(
                 title: Text('Preferences'),
                 content: Container(
-                  height: 300.0,
+                  height: 500.0,
+                  width: 400.0,
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
                     child: Column(
                       children: [
                         gameType(cx),
                         playersNumber(cx),
-                        gameEnd(),
+                        gameEnd(cx),
                         sizedBoxHeightTen(),
                         playersNames(cx),
                         sizedBoxHeightTen(),
@@ -90,7 +98,7 @@ class HomeScreen extends StatelessWidget {
           width: 10.0,
         ),
         DropdownButton<String>(
-          value: watch.getSelectedGame,
+          value: watch.game!.gameType,
           icon: const Icon(Icons.keyboard_arrow_down),
           items: read.getGamesList.map((String value) {
             return DropdownMenuItem<String>(
@@ -99,7 +107,8 @@ class HomeScreen extends StatelessWidget {
             );
           }).toList(),
           onChanged: (_) {
-            read.setSelectedGame = _!;
+            read.game!.gameType = _!;
+            read.notify();
           },
         ),
       ],
@@ -114,34 +123,60 @@ class HomeScreen extends StatelessWidget {
         SizedBox(
           width: 10.0,
         ),
-        DropdownButton<String>(
-          value: read.getPlayersCount,
-          items: read.getPlayersCountList.map((String value) {
-            return DropdownMenuItem<String>(
+        DropdownButton<int>(
+          value: read.game!.playersCount,
+          items: read.getPlayersCountList.map((int value) {
+            return DropdownMenuItem<int>(
               value: value,
-              child: Text(value),
+              child: Text(value.toString()),
             );
           }).toList(),
           onChanged: (_) {
-            read.setPlayersCount = _!;
+            read.game!.playersCount = _!;
+            read.getGameEndControllers!.clear();
+            read.notify();
           },
         ),
       ],
     );
   }
 
-  Widget gameEnd() {
-    return defaultTextFormField(
-      controller: reachedGameEndController,
-      validate: (String? value) {
-        if (value!.isEmpty) {
-          return "Please enter when game ends";
-        }
-        return null;
-      },
-      inputType: TextInputType.number,
-      label: "Game end",
-      icon: const Icon(Icons.videogame_asset),
+  Widget gameEnd(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    return Container(
+      height: 150.0,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.0),
+          border: Border.all(
+            color: Colors.black,
+          )),
+      child: GridView.builder(
+          itemCount: read.game!.playersCount == 2
+              ? 1
+              : read.game!.playersCount == 3
+                  ? 2
+                  : 3,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1, mainAxisExtent: 60.0),
+          itemBuilder: (BuildContext context, int i) {
+            read.gameEndControllers(TextEditingController());
+            return Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: defaultTextFormField(
+                controller: read.getGameEndControllers![i],
+                validate: (String? value) {
+                  if (value!.isEmpty) {
+                    return "Please enter when game ends";
+                  }
+                  return null;
+                },
+                inputType: TextInputType.number,
+                label: "Game end ${i + 1}",
+                icon: const Icon(Icons.videogame_asset),
+              ),
+            );
+          }),
     );
   }
 
@@ -152,13 +187,22 @@ class HomeScreen extends StatelessWidget {
       background: Colors.blue,
       onPress: () {
         if (formKey.currentState!.validate()) {
-          for (int i = 0; i < int.parse(read.getPlayersCount); i++) {
-            read.setPlayersList(new PlayerInfo(
-                playerName: read.getNamesControllersList[i].text,
+          List<Player> players = <Player>[];
+          List<int> gameEnds = <int>[];
+          for (int i = 0; i < read.game!.playersCount; i++) {
+            players.add(new Player(
+                playerName: read.getNamesControllers[i].text,
                 currentScore: 0,
-                playerIcon: randomIcon()));
-            read.setScoresControllersList(TextEditingController(text: "0"));
+                playerIcon: randomIcon(),
+                controller: TextEditingController(text: "0")));
           }
+          var length = read.getGameEndControllers!.length;
+          for (int x = 0; x < length; x++) {
+            var text = read.getGameEndControllers![x].text;
+            gameEnds.add(int.parse(text));
+          }
+          read.game!.playersList = players;
+          read.game!.gameEnd = gameEnds;
           Navigator.pop(cx);
           Navigator.push(
               cx, MaterialPageRoute(builder: (context) => GameScreen()));
@@ -175,15 +219,15 @@ class HomeScreen extends StatelessWidget {
       height: 100.0,
       width: 400.0,
       child: GridView.builder(
-          itemCount: int.parse(read.getPlayersCount),
+          itemCount: read.game!.playersCount,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, mainAxisExtent: 50.0),
           itemBuilder: (BuildContext context, int i) {
-            read.setNamesControllersList(TextEditingController());
+            read.namesControllers(TextEditingController());
             return Padding(
               padding: const EdgeInsets.all(3.0),
               child: defaultTextFormField(
-                controller: read.getNamesControllersList[i],
+                controller: read.getNamesControllers[i],
                 validate: (String? value) {
                   if (value!.isEmpty) {
                     return "Please enter valid name";

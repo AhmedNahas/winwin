@@ -1,66 +1,44 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:winwin/model/player_info.dart';
+
+import '../model/game_model.dart';
 
 class MainProvider with ChangeNotifier {
-  List<PlayerInfo> _playersList = [];
-  String _currentPlayerField = "";
-  late String _selectedGame;
-  late String _playerCount;
+  late Game? _currentGame;
+  int _focusedItem = 0;
   String _tappedNum = "Score";
   final List<String> _gamesList = ['Domino', 'Tawla', 'PS'];
-  final List<String> _playersCountList = ['2', '3', '4'];
-  List<TextEditingController> _scoresControllersList = [];
-  List<TextEditingController> _namesControllersList = [];
+  final List<int> _playersCountList = [2, 3, 4];
+  List<TextEditingController>? _namesControllers = [];
+  List<TextEditingController>? _gameEndControllers = [];
 
-  void clearAll() {
-    _playersList = [];
-    _currentPlayerField = "";
-    _selectedGame = "";
-    _playerCount = "";
-    _tappedNum = "Score";
-    _scoresControllersList = [];
-    _namesControllersList = [];
+  set game(Game? game) {
+    this._currentGame = game;
   }
 
-  set setCurrentTextField(String n) {
-    this._currentPlayerField = n;
+  Game? get game => _currentGame;
+
+  set setFocusedItem(int n) {
+    this._focusedItem = n;
     notify();
   }
 
-  get getCurrentTextField => _currentPlayerField;
+  get getFocusedItem => _focusedItem;
 
-  void setPlayersList(PlayerInfo player) => _playersList.add(player);
+  void namesControllers(TextEditingController con) =>
+      _namesControllers!.add(con);
 
-  List<PlayerInfo> getPlayersList() => _playersList;
+  get getNamesControllers => _namesControllers;
 
-  void setScoresControllersList(TextEditingController con) =>
-      _scoresControllersList.add(con);
-
-  get getScoresControllersList => _scoresControllersList;
-
-  void setNamesControllersList(TextEditingController con) =>
-      _namesControllersList.add(con);
-
-  get getNamesControllersList => _namesControllersList;
-
-  set setSelectedGame(String s) {
-    this._selectedGame = s;
-    notifyListeners();
+  void gameEndControllers(TextEditingController con) {
+    _gameEndControllers!.add(con);
   }
 
-  String get getSelectedGame => _selectedGame;
+  List<TextEditingController>? get getGameEndControllers => _gameEndControllers;
 
   List<String> get getGamesList => _gamesList;
 
-  set setPlayersCount(String s) {
-    this._playerCount = s;
-    notifyListeners();
-  }
-
-  String get getPlayersCount => _playerCount;
-
-  List<String> get getPlayersCountList => _playersCountList;
+  List<int> get getPlayersCountList => _playersCountList;
 
   void setTappedNumber(String v) {
     this._tappedNum = v;
@@ -70,6 +48,14 @@ class MainProvider with ChangeNotifier {
   get getTappedNum => _tappedNum;
 
   void notify() => notifyListeners();
+
+  void clearAll() {
+    _currentGame = null;
+    _focusedItem = 0;
+    _tappedNum = "Score";
+    _namesControllers = [];
+    _gameEndControllers = [];
+  }
 
   @override
   void dispose() {
