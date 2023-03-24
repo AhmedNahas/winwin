@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Widget playerScoreTextField(
@@ -96,7 +95,7 @@ AppBar defaultAppBar(
           : null,
       title: Text(
         title!,
-        style: Theme.of(context).textTheme.subtitle1,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       actions: actions,
