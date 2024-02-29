@@ -1,28 +1,23 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
   // declaring variables
-  final color;
   final textColor;
   final String buttonText;
   final buttontapped;
 
   //Constructor
-  MyButton(
-      {this.color,
-      this.textColor,
-      required this.buttonText,
-      this.buttontapped});
+  MyButton({this.textColor, required this.buttonText, this.buttontapped});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: buttontapped,
-      child: Padding(
-        padding: const EdgeInsets.all(0.2),
-        child: ClipRRect(
-          child: Container(
-            color: color,
+      child: ClipRRect(
+        child: Container(
+          child: CircleAvatar(
+            radius: 40.0,
+            backgroundColor: Colors.deepOrangeAccent,
             child: Center(
               child: Text(
                 buttonText,

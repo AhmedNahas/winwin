@@ -1,260 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:winwin/helpers/my_button.dart';
+import 'package:winwin/helpers/common.dart';
 import 'package:winwin/helpers/reusable_component.dart';
+import 'package:winwin/model/game_model.dart';
+import 'package:winwin/model/player_info.dart';
 import 'package:winwin/provider/main_provider.dart';
+import 'package:winwin/screens/game_screen.dart';
 
+import '../helpers/constants.dart';
+
+// ignore: must_be_immutable
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.title}) : super(key: key);
-  final List<String> buttons = [
-    'C',
-    '+/-',
-    '%',
-    'DEL',
-    '7',
-    '8',
-    '9',
-    '/',
-    '4',
-    '5',
-    '6',
-    'x',
-    '1',
-    '2',
-    '3',
-    '-',
-    '0',
-    '.',
-    '=',
-    '+',
-  ];
-  String players = "2";
-  late TextEditingController reachedGameEndController;
-  List<TextEditingController> controllersList = [];
-  final String title;
+  String title;
   var formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // var provider = Provider.of<MainProvider>(context);
-    // provider.init();
-    reachedGameEndController = TextEditingController();
+    var read = context.read<MainProvider>();
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
+      appBar: defaultAppBar(
+        title: title,
+        context: context,
+        showLeading: false,
+        onTab: null,
       ), //AppBar
       backgroundColor: Colors.black,
-      body: context.watch<MainProvider>().isGameReady()
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    child: GridView.builder(
-                        itemCount: int.parse(
-                            context.read<MainProvider>().getPlayersCount),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
-                        itemBuilder: (BuildContext context, int i) {
-                          return playerScoreTextField(
-                              controller: controllersList[i],
-                              onTab: () {
-                                context.read<MainProvider>().setCurrentField =
-                                    i.toString();
-                                print(
-                                    "current Player ${context.read<MainProvider>().getCurrentPlayerField}");
-                                controllersList[i].text = context
-                                    .read<MainProvider>()
-                                    .getCurrentPlayersFieldList[i];
-                              },
-                              label: "Whooo");
-                        }),
-                  ),
+      body: Center(
+        child: InkWell(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 100.0,
+                width: 100.0,
+                child: Image(
+                  image: AssetImage('assets/images/domino.png'),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GridView.builder(
-                          itemCount: buttons.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 4, mainAxisExtent: 50),
-                          itemBuilder: (BuildContext context, int index) {
-                            // Clear Button
-                            if (index == 0) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField] = "";
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-
-                            // +/- button
-                            else if (index == 1) {
-                              return MyButton(
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-                            // % Button
-                            else if (index == 2) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                              .read<MainProvider>()
-                                              .currentPlayerFieldList[
-                                          context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField] +=
-                                      buttons[index];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-                            // Delete Button
-                            else if (index == 3) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                      .read<MainProvider>()
-                                      .currentPlayerFieldList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .substring(
-                                          0,
-                                          context
-                                                  .read<MainProvider>()
-                                                  .currentPlayerFieldList[
-                                                      int.parse(context
-                                                          .read<MainProvider>()
-                                                          .getCurrentPlayerField)]
-                                                  .length -
-                                              1);
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.blue[50],
-                                textColor: Colors.black,
-                              );
-                            }
-                            // Equal_to Button
-                            else if (index == 18) {
-                              return MyButton(
-                                buttontapped: () {
-                                  context.read<MainProvider>().equalPressed(
-                                      context
-                                              .read<MainProvider>()
-                                              .currentPlayerFieldList[
-                                          int.parse(context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField)]);
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: Colors.orange[700],
-                                textColor: Colors.white,
-                              );
-                            }
-
-                            //  other buttons
-                            else {
-                              return MyButton(
-                                buttontapped: () {
-                                  context
-                                              .read<MainProvider>()
-                                              .currentPlayerFieldList[
-                                          int.parse(context
-                                              .read<MainProvider>()
-                                              .getCurrentPlayerField)] +=
-                                      buttons[index];
-                                  controllersList[int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)]
-                                      .text = context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayersFieldList[
-                                      int.parse(context
-                                          .read<MainProvider>()
-                                          .getCurrentPlayerField)];
-                                  context.read<MainProvider>().notify();
-                                },
-                                buttonText: buttons[index],
-                                color: context
-                                        .watch<MainProvider>()
-                                        .isOperator(buttons[index])
-                                    ? Colors.blueAccent
-                                    : Colors.white,
-                                textColor: context
-                                        .watch<MainProvider>()
-                                        .isOperator(buttons[index])
-                                    ? Colors.white
-                                    : Colors.black,
-                              );
-                            }
-                          }),
-                    ), // GridView.builder
-                  ),
-                ),
-              ],
-            )
-          : Center(
-              child: InkWell(
-                child: Text(
-                  'Tap to add new game!',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onTap: () {
-                  context.read<MainProvider>().setSelectedGame =
-                      context.read<MainProvider>().getGamesList[0];
-                  context.read<MainProvider>().setPlayersCount =
-                      context.read<MainProvider>().getPlayersCountList[0];
-                  showPrefDialog(context);
-                },
               ),
-            ),
+              Text(
+                'Tap to add new game!',
+                style: TextStyle(color: Colors.orangeAccent, fontSize: 20),
+              ),
+            ],
+          ),
+          onTap: () {
+            Game game = Game(
+                gameType: read.getGamesList[0],
+                playersCount: read.getPlayersCountList[0],
+                gameIcon: randomIcon(),
+                winnersCount: 0,
+                gameStatus: Status.ONGOING);
+            read.game = game;
+            showPrefDialog(context);
+          },
+        ),
+      ),
     );
   }
 
@@ -266,102 +67,184 @@ class HomeScreen extends StatelessWidget {
               child: AlertDialog(
                 title: Text('Preferences'),
                 content: Container(
-                  height: 300.0,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text('Game type'),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          DropdownButton<String>(
-                            value: cx.watch<MainProvider>().getSelectedGame,
-                            icon: const Icon(Icons.keyboard_arrow_down),
-                            items: cx
-                                .read<MainProvider>()
-                                .getGamesList
-                                .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (_) {
-                              cx.read<MainProvider>().setSelectedGame = _!;
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Text('No of players'),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          DropdownButton<String>(
-                            value: cx.read<MainProvider>().getPlayersCount,
-                            items: cx
-                                .read<MainProvider>()
-                                .getPlayersCountList
-                                .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            onChanged: (_) {
-                              cx.read<MainProvider>().setPlayersCount = _!;
-                            },
-                          ),
-                        ],
-                      ),
-                      defaultTextFormField(
-                        controller: reachedGameEndController,
-                        validate: (String? value) {
-                          if (value!.isEmpty) {
-                            return "Please enter when game ends";
-                          }
-                        },
-                        inputType: TextInputType.number,
-                        label: "Game end",
-                        icon: const Icon(Icons.videogame_asset),
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      defaultButton(
-                        width: double.infinity,
-                        background: Colors.blue,
-                        onPress: () {
-                          if (formKey.currentState!.validate()) {
-                            cx.read<MainProvider>().setIsGameReady(true);
-                            print("is game ready true");
-                            Navigator.pop(cx);
-                            for (int i = 0;
-                                i <
-                                    int.parse(cx
-                                        .read<MainProvider>()
-                                        .getPlayersCount);
-                                i++) {
-                              cx
-                                  .read<MainProvider>()
-                                  .currentPlayerFieldList
-                                  .add("");
-                              controllersList.add(TextEditingController(
-                                  text: cx
-                                      .read<MainProvider>()
-                                      .currentPlayerFieldList[i]));
-                            }
-                          }
-                        },
-                        label: 'Ok',
-                        textColor: Colors.white,
-                      ),
-                    ],
+                  height: 500.0,
+                  width: 400.0,
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        gameType(cx),
+                        playersNumber(cx),
+                        gameEnd(cx),
+                        sizedBoxHeightTen(),
+                        playersNames(cx),
+                        sizedBoxHeightTen(),
+                        okayButton(cx),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ));
+  }
+
+  Widget gameType(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    var watch = cx.watch<MainProvider>();
+    return Row(
+      children: [
+        Text('Game type'),
+        SizedBox(
+          width: 10.0,
+        ),
+        DropdownButton<String>(
+          value: watch.game!.gameType,
+          icon: const Icon(Icons.keyboard_arrow_down),
+          items: read.getGamesList.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (_) {
+            read.game!.gameType = _!;
+            read.notify();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget playersNumber(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    return Row(
+      children: [
+        Text('No of players'),
+        SizedBox(
+          width: 10.0,
+        ),
+        DropdownButton<int>(
+          value: read.game!.playersCount,
+          items: read.getPlayersCountList.map((int value) {
+            return DropdownMenuItem<int>(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
+          onChanged: (_) {
+            read.game!.playersCount = _!;
+            read.getGameEndControllers!.clear();
+            read.notify();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget gameEnd(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    return Container(
+      height: 150.0,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.0),
+          border: Border.all(
+            color: Colors.black,
+          )),
+      child: GridView.builder(
+          itemCount: read.game!.playersCount == 2
+              ? 1
+              : read.game!.playersCount == 3
+                  ? 2
+                  : 3,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1, mainAxisExtent: 60.0),
+          itemBuilder: (BuildContext context, int i) {
+            read.gameEndControllers(TextEditingController());
+            return Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: defaultTextFormField(
+                controller: read.getGameEndControllers![i],
+                validate: (String? value) {
+                  if (value!.isEmpty) {
+                    return "Please enter when game ends";
+                  }
+                  return null;
+                },
+                inputType: TextInputType.number,
+                label: "Game end ${i + 1}",
+                icon: const Icon(Icons.videogame_asset),
+              ),
+            );
+          }),
+    );
+  }
+
+  Widget okayButton(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    return defaultButton(
+      width: double.infinity,
+      background: Colors.deepOrange,
+      onPress: () {
+        if (formKey.currentState!.validate()) {
+          List<Player> players = <Player>[];
+          List<int> gameEnds = <int>[];
+          for (int i = 0; i < read.game!.playersCount; i++) {
+            players.add(new Player(
+                playerName: read.getNamesControllers[i].text,
+                currentScore: 0,
+                playerIcon: randomIcon(),
+                controller: TextEditingController(text: "0"), scoreList: <int>[]));
+          }
+          var length = read.getGameEndControllers!.length;
+          for (int x = 0; x < length; x++) {
+            var text = read.getGameEndControllers![x].text;
+            gameEnds.add(int.parse(text));
+          }
+          read.game!.playersList = players;
+          read.game!.gameEnd = gameEnds;
+          Navigator.pop(cx);
+          Navigator.push(
+              cx, MaterialPageRoute(builder: (context) => GameScreen()));
+        }
+      },
+      label: 'Ok',
+      textColor: Colors.white,
+    );
+  }
+
+  Widget playersNames(BuildContext cx) {
+    var read = cx.read<MainProvider>();
+    return Container(
+      height: 150.0,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.0),
+          border: Border.all(
+            color: Colors.black,
+          )),
+      child: GridView.builder(
+          itemCount: read.game!.playersCount,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1, mainAxisExtent: 50.0),
+          itemBuilder: (BuildContext context, int i) {
+            read.namesControllers(TextEditingController());
+            return Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: defaultTextFormField(
+                controller: read.getNamesControllers[i],
+                validate: (String? value) {
+                  if (value!.isEmpty) {
+                    return "Please enter valid name";
+                  }
+                  return null;
+                },
+                inputType: TextInputType.text,
+                label: "Player ${i + 1}",
+                icon: const Icon(Icons.face),
+              ),
+            );
+          }),
+    );
   }
 }

@@ -1,80 +1,65 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:math_expressions/math_expressions.dart';
+import 'package:flutter/material.dart';
+
+import '../model/game_model.dart';
 
 class MainProvider with ChangeNotifier {
-  List<String> currentPlayerFieldList = [];
-  String currentPlayerField = "";
-  late String selectedGame;
-  late String playerCount;
-  final List<String> gamesList = ['Domino', 'Tawla', 'PS'];
-  final List<String> playersCountList = ['2', '3', '4'];
-  bool gameReady = false;
+  late Game? _currentGame;
+  int _focusedItem = 0;
+  String _tappedNum = "Score";
+  final List<String> _gamesList = ['Domino', 'Tawla', 'PS'];
+  final List<int> _playersCountList = [2, 3, 4];
+  List<TextEditingController>? _namesControllers = [];
+  List<TextEditingController>? _gameEndControllers = [];
 
-  // void init() {
-  //   for (int i = 0; i < 2; i++) {
-  //     //how many players
-  //     userInput.add("0");
-  //   }
-  // }
-
-  set setCurrentField(String n) {
-    this.currentPlayerField = n;
-    notifyListeners();
+  set game(Game? game) {
+    this._currentGame = game;
   }
+
+  Game? get game => _currentGame;
+
+  set setFocusedItem(int n) {
+    this._focusedItem = n;
+    notify();
+  }
+
+  get getFocusedItem => _focusedItem;
+
+  void namesControllers(TextEditingController con) =>
+      _namesControllers!.add(con);
+
+  get getNamesControllers => _namesControllers;
+
+  void gameEndControllers(TextEditingController con) {
+    _gameEndControllers!.add(con);
+  }
+
+  List<TextEditingController>? get getGameEndControllers => _gameEndControllers;
+
+  List<String> get getGamesList => _gamesList;
+
+  List<int> get getPlayersCountList => _playersCountList;
+
+  void setTappedNumber(String v) {
+    this._tappedNum = v;
+    notify();
+  }
+
+  get getTappedNum => _tappedNum;
 
   void notify() => notifyListeners();
 
-  get getCurrentPlayerField => currentPlayerField;
-
-  get getCurrentPlayersFieldList => currentPlayerFieldList;
-
-  void setIsGameReady(bool n) {
-    this.gameReady = n;
-    notifyListeners();
+  void clearAll() {
+    _currentGame = null;
+    _focusedItem = 0;
+    _tappedNum = "Score";
+    _namesControllers = [];
+    _gameEndControllers = [];
   }
 
-  bool isGameReady() {
-    return gameReady;
+  @override
+  void dispose() {
+    clearAll();
+    super.dispose();
   }
-
-  void equalPressed(String i) {
-    String finalUserInput =
-        currentPlayerFieldList[int.parse(currentPlayerField)];
-    finalUserInput = currentPlayerFieldList[int.parse(currentPlayerField)]
-        .replaceAll('x', '*');
-
-    Parser p = Parser();
-    Expression exp = p.parse(finalUserInput);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    var intV = eval.toInt();
-    currentPlayerFieldList[int.parse(currentPlayerField)] = intV.toString();
-    notifyListeners();
-  }
-
-  bool isOperator(String x) {
-    if (x == '/' || x == 'x' || x == '-' || x == '+' || x == '=') {
-      return true;
-    }
-    return false;
-  }
-
-  set setSelectedGame(String s) {
-    this.selectedGame = s;
-    notifyListeners();
-  }
-
-  String get getSelectedGame => selectedGame;
-
-  List<String> get getGamesList => gamesList;
-
-  set setPlayersCount(String s) {
-    this.playerCount = s;
-    notifyListeners();
-  }
-
-  String get getPlayersCount => playerCount;
-
-  List<String> get getPlayersCountList => playersCountList;
 }
