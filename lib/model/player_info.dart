@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:winwin/helpers/constants.dart';
 
@@ -9,16 +8,19 @@ class Player {
   Status status = Status.ONGOING;
   Color color = Colors.black;
   late TextEditingController controller;
+  late List<int> scoreList;
 
   Player(
       {required playerName,
       required currentScore,
       required playerIcon,
-      required controller}) {
+      required controller,
+      required List<int> scoreList}) {
     this.playerName = playerName;
     this.currentScore = currentScore;
     this.playerIcon = playerIcon;
     this.controller = controller;
+    this.scoreList = scoreList;
   }
 
   set setStatus(Status status) {

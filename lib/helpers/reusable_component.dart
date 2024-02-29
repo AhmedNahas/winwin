@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:winwin/model/player_info.dart';
 
@@ -77,6 +76,7 @@ Widget playersCard(
 Widget playersCardDomino(
     {required controller,
     required onTextTab,
+    required onUndo,
     required context,
     required Player player}) {
   return SingleChildScrollView(
@@ -116,6 +116,10 @@ Widget playersCardDomino(
                       fillColor: Colors.white,
                     ),
                   ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.undo, color: Colors.deepOrange),
+                  onPressed: onUndo,
                 ),
               ],
             ),
@@ -186,7 +190,7 @@ AppBar defaultAppBar(
           : null,
       title: Text(
         title!,
-        style: Theme.of(context).textTheme.subtitle1,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       actions: actions,
       backgroundColor: Colors.deepOrange,

@@ -184,7 +184,7 @@ class HomeScreen extends StatelessWidget {
     var read = cx.read<MainProvider>();
     return defaultButton(
       width: double.infinity,
-      background: Colors.blue,
+      background: Colors.deepOrange,
       onPress: () {
         if (formKey.currentState!.validate()) {
           List<Player> players = <Player>[];
@@ -194,7 +194,7 @@ class HomeScreen extends StatelessWidget {
                 playerName: read.getNamesControllers[i].text,
                 currentScore: 0,
                 playerIcon: randomIcon(),
-                controller: TextEditingController(text: "0")));
+                controller: TextEditingController(text: "0"), scoreList: <int>[]));
           }
           var length = read.getGameEndControllers!.length;
           for (int x = 0; x < length; x++) {
@@ -216,12 +216,17 @@ class HomeScreen extends StatelessWidget {
   Widget playersNames(BuildContext cx) {
     var read = cx.read<MainProvider>();
     return Container(
-      height: 100.0,
-      width: 400.0,
+      height: 150.0,
+      padding: EdgeInsets.all(15.0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30.0),
+          border: Border.all(
+            color: Colors.black,
+          )),
       child: GridView.builder(
           itemCount: read.game!.playersCount,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, mainAxisExtent: 50.0),
+              crossAxisCount: 1, mainAxisExtent: 50.0),
           itemBuilder: (BuildContext context, int i) {
             read.namesControllers(TextEditingController());
             return Padding(
@@ -235,7 +240,7 @@ class HomeScreen extends StatelessWidget {
                   return null;
                 },
                 inputType: TextInputType.text,
-                label: "Name",
+                label: "Player ${i + 1}",
                 icon: const Icon(Icons.face),
               ),
             );

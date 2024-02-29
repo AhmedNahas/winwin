@@ -54,6 +54,15 @@ class GameScreen extends StatelessWidget {
                       },
                       player: read.game!.playersList[i],
                       context: context,
+                      onUndo: () {
+                        var score = read.game!.playersList[i];
+                        if (score.currentScore != 0) {
+                          score.currentScore =
+                              score.currentScore - score.scoreList.last;
+                          score.scoreList.removeLast();
+                          score.controller.text = score.currentScore.toString();
+                        }
+                      },
                     );
                   }),
             ),
@@ -75,7 +84,12 @@ class GameScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30.0),
                 color: Colors.green,
               ),
-              child: Text(context.watch<MainProvider>().getTappedNum),
+              child: GestureDetector(
+                  onTap: () {
+                    read.setTappedNumber("");
+                    read.notify();
+                  },
+                  child: Text(context.watch<MainProvider>().getTappedNum)),
             ),
             Container(
               height: 300.0,
@@ -139,8 +153,7 @@ class GameScreen extends StatelessWidget {
     var finalScore = currentScore + newScore;
     g.playersList[i].controller.text = finalScore.toString();
     g.playersList[i].currentScore = finalScore;
-    read.setTappedNumber("");
-
+    g.playersList[i].scoreList.add(int.parse(read.getTappedNum));
     whenGameEnds(g, i);
 
     read.notify();
