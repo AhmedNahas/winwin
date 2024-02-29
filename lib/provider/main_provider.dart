@@ -53,8 +53,8 @@ class MainProvider with ChangeNotifier {
     _currentGame = null;
     _focusedItem = 0;
     _tappedNum = "Score";
-    _namesControllers = [];
-    _gameEndControllers = [];
+    _namesControllers!.clear();
+    _gameEndControllers!.clear();
   }
 
   @override
